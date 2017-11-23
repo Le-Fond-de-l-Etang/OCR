@@ -3,9 +3,11 @@ public class Perceptron {
     private double inputWeights[];
     private double hiddenSums[];
     private double hiddenValues[];
+    private double hiddenErrorMargin[];
     private double outputWeights[];
     private double outputSum;
     private double outputValue;
+    private double outputErrorMargin;
 
     public Perceptron(int inputSize, int hiddenSize) {
         inputValues = new double[inputSize];
@@ -13,6 +15,7 @@ public class Perceptron {
         hiddenSums = new double[hiddenSize];
         hiddenValues = new double[hiddenSize];
         outputWeights = new double[hiddenSize];
+        hiddenErrorMargin = new double[hiddenSize];
         initializeWeights();
     }
 
@@ -41,7 +44,7 @@ public class Perceptron {
     /**
      * Fonction de propagation qui recalcule les sommes et les valeurs des neurones à partir des poids
      */
-    private void propagate(double input[]) {
+    private void calculate(double input[]) {
         inputValues = input;
         for (int j=0; j<hiddenValues.length; j++) {
             hiddenSums[j] = 0;
@@ -67,24 +70,27 @@ public class Perceptron {
         return 1/denominateur;
     }
 
-    /**
-     * Calcul des marges d'erreurs et recalcul des poids
-     * @param expectedOutput Tableau des sorties attendues
-     */
-    private void correctWeights(double expectedOutput) {
-        double outputErrorMargin = transfertDerivative(outputSum) * (expectedOutput - outputValue);
-        for(int i=0; i<hiddenValues.length; i++) {
-            double deltaWeight = Math.abs(outputErrorMargin/hiddenValues[i]);
-            outputWeights[i] = outputWeights[i] - deltaWeight;
+    private void calculateErrorMargins(double expectedOutput) {
+        outputErrorMargin = expectedOutput - outputValue;
+        for (int i=0; i<hiddenValues.length; i++) {
+            hiddenErrorMargin[i] = outputWeights[i] * outputErrorMargin;
         }
-        for(int i=0; i<hiddenValues.length; i++) {
-            double errorMargin = transfertDerivative(hiddenSums[i]) * (expectedOutput - hiddenValues[i]);
-            for(int j=0; j<inputValues.length; j++) {
-                if (inputValues[j] != 0) {
-                    double deltaWeight = Math.abs(errorMargin / inputValues[j]);
-                    inputWeights[i * inputValues.length + j] = inputWeights[i * inputValues.length + j] - deltaWeight;
-                }
+        /*for (int i=0; i<inputValues.length; i++) {
+            inputErrorMargin[i] = 0;
+            for (int j=0; j<hiddenValues.length; j++) {
+                inputErrorMargin[i] += inputWeights[j*inputValues.length+i] * hiddenErrorMargin[j];
             }
+        }*/
+    }
+
+    private void recalculateWeights() {
+        for (int i=0; i<hiddenValues.length; i++) {
+            for (int j=0; j<inputValues.length; j++) {
+                inputWeights[i*inputValues.length+j] -= 0.5 * hiddenErrorMargin[i] * transfertDerivative(hiddenSums[i]) * inputValues[j];
+            }
+        }
+        for (int i=0; i<hiddenValues.length; i++) {
+            outputWeights[i] -= 0.5 * outputErrorMargin * transfertDerivative(outputSum) * hiddenValues[i];
         }
     }
 
@@ -106,9 +112,9 @@ public class Perceptron {
      * @return Nouvelle sortie
      */
     public double learn(double[] input, double expectedOutput) {
-        propagate(input);
-        correctWeights(expectedOutput);
-        propagate(input);
+        calculate(input);
+        calculateErrorMargins(expectedOutput);
+        recalculateWeights();
         return outputValue;
     }
 }
