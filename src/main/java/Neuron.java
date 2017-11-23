@@ -1,3 +1,5 @@
+import java.text.DecimalFormat;
+
 public class Neuron {
     public double sum;
     public double value;
@@ -5,6 +7,7 @@ public class Neuron {
 
     @Override
     public String toString() {
-        return "Neuron(value:" + value + ", sum:" + sum + ", error:" + error + ")";
+        DecimalFormat df = new DecimalFormat("####.###");
+        return "Neuron(value:" + df.format(value) + ", sum:" + df.format(sum) + ", error:" + df.format(error) + ")";
     }
 }
