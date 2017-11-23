@@ -88,12 +88,12 @@ public class Perceptron {
     private void recalculateWeights() {
         for (int i = 0; i< hiddenLayer.neurons.length; i++) {
             for (int j = 0; j< inputLayer.neurons.length; j++) {
-                inputWeights[i* inputLayer.neurons.length+j] -= 0.5 * hiddenLayer.neurons[i].error * transfertDerivative(hiddenLayer.neurons[i].sum) * inputLayer.neurons[j].value;
+                inputWeights[i* inputLayer.neurons.length+j] += 0.15 * hiddenLayer.neurons[i].error * transfertDerivative(hiddenLayer.neurons[i].sum) * inputLayer.neurons[j].value;
             }
         }
         for (int i = 0; i< outputLayer.neurons.length; i++) {
             for (int j = 0; j< hiddenLayer.neurons.length; j++) {
-                outputWeights[i* hiddenLayer.neurons.length+j] -= 0.5 * outputLayer.neurons[i].error * transfertDerivative(outputLayer.neurons[i].sum) * hiddenLayer.neurons[j].value;
+                outputWeights[i* hiddenLayer.neurons.length+j] += 0.15 * outputLayer.neurons[i].error * transfertDerivative(outputLayer.neurons[i].sum) * hiddenLayer.neurons[j].value;
             }
         }
     }
@@ -121,8 +121,8 @@ public class Perceptron {
      * @return Valeur du neurone de sortie
      */
     private double transfert(double input) {
-        double denominateur = 1 + Math.exp(-input);
-        return 1/denominateur;
+        double denominateur = 1.00 + Math.exp(-input);
+        return 1.00/denominateur;
     }
 
     /**
@@ -131,7 +131,7 @@ public class Perceptron {
      * @return Dérivée
      */
     private double transfertDerivative(double input) {
-        double nominateur = -Math.exp(-input);
+        double nominateur = Math.exp(-input);
         double denominateur = Math.pow(1 + Math.exp(-input), 2);
         return nominateur / denominateur;
     }
