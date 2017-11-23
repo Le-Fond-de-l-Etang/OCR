@@ -19,6 +19,8 @@ public class Perceptron {
         initializeWeights();
     }
 
+
+
     /**
      * Initialise aléatoirement les poids des neurones
      */
@@ -41,6 +43,8 @@ public class Perceptron {
         this.outputWeights = outputWeights;
     }
 
+
+
     /**
      * Fonction de propagation qui recalcule les sommes et les valeurs des neurones à partir des poids
      */
@@ -61,15 +65,9 @@ public class Perceptron {
     }
 
     /**
-     * Fonction de transfert
-     * @param input Somme des produits des poids par les valeurs de neurones
-     * @return Valeur du neurone de sortie
+     * Calcule les marges d'erreurs
+     * @param expectedOutput Valeur cible
      */
-    private double transfert(double input) {
-        double denominateur = 1 + Math.exp(-input);
-        return 1/denominateur;
-    }
-
     private void calculateErrorMargins(double expectedOutput) {
         outputErrorMargin = expectedOutput - outputValue;
         for (int i=0; i<hiddenValues.length; i++) {
@@ -83,6 +81,9 @@ public class Perceptron {
         }*/
     }
 
+    /**
+     * Recalcule les poids en fonction des marges d'erreur
+     */
     private void recalculateWeights() {
         for (int i=0; i<hiddenValues.length; i++) {
             for (int j=0; j<inputValues.length; j++) {
@@ -92,17 +93,6 @@ public class Perceptron {
         for (int i=0; i<hiddenValues.length; i++) {
             outputWeights[i] -= 0.5 * outputErrorMargin * transfertDerivative(outputSum) * hiddenValues[i];
         }
-    }
-
-    /**
-     * Dérivée de la fonction de transfert
-     * @param input Somme des produits des poids par les valeurs de neurones
-     * @return Dérivée
-     */
-    private double transfertDerivative(double input) {
-        double nominateur = -Math.exp(-input);
-        double denominateur = Math.pow(1 + Math.exp(-input), 2);
-        return nominateur / denominateur;
     }
 
     /**
@@ -116,5 +106,28 @@ public class Perceptron {
         calculateErrorMargins(expectedOutput);
         recalculateWeights();
         return outputValue;
+    }
+
+
+
+    /**
+     * Fonction de transfert
+     * @param input Somme des produits des poids par les valeurs de neurones
+     * @return Valeur du neurone de sortie
+     */
+    private double transfert(double input) {
+        double denominateur = 1 + Math.exp(-input);
+        return 1/denominateur;
+    }
+
+    /**
+     * Dérivée de la fonction de transfert
+     * @param input Somme des produits des poids par les valeurs de neurones
+     * @return Dérivée
+     */
+    private double transfertDerivative(double input) {
+        double nominateur = -Math.exp(-input);
+        double denominateur = Math.pow(1 + Math.exp(-input), 2);
+        return nominateur / denominateur;
     }
 }
