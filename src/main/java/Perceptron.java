@@ -1,21 +1,17 @@
 public class Perceptron {
-    private double inputValues[];
     private double inputWeights[];
-    private double hiddenSums[];
-    private double hiddenValues[];
-    private double hiddenErrorMargin[];
     private double outputWeights[];
-    private double outputSum;
-    private double outputValue;
-    private double outputErrorMargin;
 
-    public Perceptron(int inputSize, int hiddenSize) {
-        inputValues = new double[inputSize];
+    private NeuronLayer inputLayer;
+    private NeuronLayer hiddenLayer;
+    private NeuronLayer outputLayer;
+
+    public Perceptron(int inputSize, int hiddenSize, int outputSize) {
+        inputLayer = new NeuronLayer(inputSize);
         inputWeights = new double[inputSize * hiddenSize];
-        hiddenSums = new double[hiddenSize];
-        hiddenValues = new double[hiddenSize];
-        outputWeights = new double[hiddenSize];
-        hiddenErrorMargin = new double[hiddenSize];
+        hiddenLayer = new NeuronLayer(hiddenSize);
+        outputWeights = new double[hiddenSize * outputSize];
+        outputLayer = new NeuronLayer(outputSize);
         initializeWeights();
     }
 
@@ -48,52 +44,61 @@ public class Perceptron {
     /**
      * Fonction de propagation qui recalcule les sommes et les valeurs des neurones à partir des poids
      */
-    private void calculate(double input[]) {
-        inputValues = input;
-        for (int j=0; j<hiddenValues.length; j++) {
-            hiddenSums[j] = 0;
-            for (int i=0; i<inputValues.length; i++) {
-                hiddenSums[j] += inputValues[i] * inputWeights[j*inputValues.length + i];
+    private void calculate(double inputNeuronValues[]) {
+        int x = 0;
+        for (double inputNeuronValue : inputNeuronValues) {
+            inputLayer.neurons[x].value = inputNeuronValue;
+            x++;
+        }
+        for (int j = 0; j< hiddenLayer.neurons.length; j++) {
+            hiddenLayer.neurons[j].sum = 0;
+            for (int i = 0; i< inputLayer.neurons.length; i++) {
+                hiddenLayer.neurons[j].sum += inputLayer.neurons[i].value * inputWeights[j* inputLayer.neurons.length + i];
             }
-            hiddenValues[j] = transfert(hiddenSums[j]);
+            hiddenLayer.neurons[j].value = transfert(hiddenLayer.neurons[j].sum);
         }
-        outputSum = 0;
-        for (int j=0; j<outputWeights.length; j++) {
-            outputSum += outputWeights[j] * hiddenValues[j];
+        for (int j = 0; j< outputLayer.neurons.length; j++) {
+            outputLayer.neurons[j].sum = 0;
+            for (int i = 0; i< hiddenLayer.neurons.length; i++) {
+                outputLayer.neurons[j].sum += hiddenLayer.neurons[i].value * outputWeights[j* hiddenLayer.neurons.length + i];
+            }
+            outputLayer.neurons[j].value = transfert(outputLayer.neurons[j].sum);
         }
-        outputValue = transfert(outputSum);
     }
 
     /**
      * Calcule les marges d'erreurs
-     * @param expectedOutput Valeur cible
+     * @param expectedOutput Valeurs de sortie cibles
      */
-    private void calculateErrorMargins(double expectedOutput) {
-        outputErrorMargin = expectedOutput - outputValue;
-        for (int i=0; i<hiddenValues.length; i++) {
-            hiddenErrorMargin[i] = outputWeights[i] * outputErrorMargin;
+    private void calculateErrorMargins(double[] expectedOutput) {
+        for (int i = 0; i< outputLayer.neurons.length; i++) {
+            outputLayer.neurons[i].error = (expectedOutput[i] - outputLayer.neurons[i].value);
         }
-        /*for (int i=0; i<inputValues.length; i++) {
-            inputErrorMargin[i] = 0;
-            for (int j=0; j<hiddenValues.length; j++) {
-                inputErrorMargin[i] += inputWeights[j*inputValues.length+i] * hiddenErrorMargin[j];
+        for (int i = 0; i< hiddenLayer.neurons.length; i++) {
+            hiddenLayer.neurons[i].error = 0;
+            for (int j = 0; j< outputLayer.neurons.length; j++) {
+                hiddenLayer.neurons[i].error += outputWeights[j* hiddenLayer.neurons.length+i] * outputLayer.neurons[j].error;
             }
-        }*/
+        }
     }
 
     /**
      * Recalcule les poids en fonction des marges d'erreur
      */
     private void recalculateWeights() {
-        for (int i=0; i<hiddenValues.length; i++) {
-            for (int j=0; j<inputValues.length; j++) {
-                inputWeights[i*inputValues.length+j] -= 0.5 * hiddenErrorMargin[i] * transfertDerivative(hiddenSums[i]) * inputValues[j];
+        for (int i = 0; i< hiddenLayer.neurons.length; i++) {
+            for (int j = 0; j< inputLayer.neurons.length; j++) {
+                inputWeights[i* inputLayer.neurons.length+j] -= 0.5 * hiddenLayer.neurons[i].error * transfertDerivative(hiddenLayer.neurons[i].sum) * inputLayer.neurons[j].value;
             }
         }
-        for (int i=0; i<hiddenValues.length; i++) {
-            outputWeights[i] -= 0.5 * outputErrorMargin * transfertDerivative(outputSum) * hiddenValues[i];
+        for (int i = 0; i< outputLayer.neurons.length; i++) {
+            for (int j = 0; j< hiddenLayer.neurons.length; j++) {
+                outputWeights[i* hiddenLayer.neurons.length+j] -= 0.5 * outputLayer.neurons[i].error * transfertDerivative(outputLayer.neurons[i].sum) * hiddenLayer.neurons[j].value;
+            }
         }
     }
+
+
 
     /**
      * Effectue un cycle d'apprentissage
@@ -101,11 +106,11 @@ public class Perceptron {
      * @param expectedOutput Sortie attendue
      * @return Nouvelle sortie
      */
-    public double learn(double[] input, double expectedOutput) {
+    public Neuron[] learn(double[] input, double[] expectedOutput) {
         calculate(input);
         calculateErrorMargins(expectedOutput);
         recalculateWeights();
-        return outputValue;
+        return outputLayer.neurons;
     }
 
 
