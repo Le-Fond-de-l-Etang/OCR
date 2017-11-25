@@ -1,3 +1,6 @@
+import NeuronNetwork.Neuron;
+import NeuronNetwork.Perceptron;
+
 public class Application {
     public static void main(String[] args) {
         Perceptron perceptron = new Perceptron(2, 3, 1);
