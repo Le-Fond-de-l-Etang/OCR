@@ -1,3 +1,5 @@
+package NeuronNetwork;
+
 public class NeuronLayer {
     public Neuron[] neurons;
 

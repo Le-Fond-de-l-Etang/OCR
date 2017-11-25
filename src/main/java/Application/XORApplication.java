@@ -1,7 +1,9 @@
+package Application;
+
 import NeuronNetwork.Neuron;
 import NeuronNetwork.Perceptron;
 
-public class Application {
+public class XORApplication {
     public static void main(String[] args) {
         Perceptron perceptron = new Perceptron(2, 3, 1);
         Neuron[] result1, result2, result3, result4;

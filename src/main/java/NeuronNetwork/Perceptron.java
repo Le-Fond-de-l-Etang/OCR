@@ -1,3 +1,5 @@
+package NeuronNetwork;
+
 public class Perceptron {
     private double inputWeights[];
     private double outputWeights[];
