@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class CharacterMapping {
+    /**
+     * Mapping output neuron number with a character
+     */
     private static final Map<Integer, Character> characters = loadCharacters();
     private static Map<Integer, Character> loadCharacters()
     {
@@ -22,6 +25,11 @@ public class CharacterMapping {
         return map;
     }
 
+    /**
+     * Return output neuron number for a given character
+     * @param character
+     * @return Position
+     */
     private static int getMatchingCharacterKey(char character) {
         int key = -1;
         for (Map.Entry<Integer, Character> entry : characters.entrySet()) {
@@ -32,6 +40,11 @@ public class CharacterMapping {
         return key;
     }
 
+    /**
+     * Return character corresponding to a given neuron position
+     * @param key Position of the neuron
+     * @return Character associated with this position
+     */
     private static char getMatchingKeyCharacter(int key) {
         if (characters.containsKey(key)) {
             return characters.get(key);

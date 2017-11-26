@@ -1,6 +1,8 @@
 package NeuronNetwork;
 
 public class Perceptron {
+    private double LEARNING_STEP = 0.15;
+
     private double inputWeights[];
     private double outputWeights[];
 
@@ -90,12 +92,12 @@ public class Perceptron {
     private void recalculateWeights() {
         for (int i = 0; i< hiddenLayer.neurons.length; i++) {
             for (int j = 0; j< inputLayer.neurons.length; j++) {
-                inputWeights[i* inputLayer.neurons.length+j] += 0.15 * hiddenLayer.neurons[i].error * transfertDerivative(hiddenLayer.neurons[i].sum) * inputLayer.neurons[j].value;
+                inputWeights[i* inputLayer.neurons.length+j] += LEARNING_STEP * hiddenLayer.neurons[i].error * transfertDerivative(hiddenLayer.neurons[i].sum) * inputLayer.neurons[j].value;
             }
         }
         for (int i = 0; i< outputLayer.neurons.length; i++) {
             for (int j = 0; j< hiddenLayer.neurons.length; j++) {
-                outputWeights[i* hiddenLayer.neurons.length+j] += 0.15 * outputLayer.neurons[i].error * transfertDerivative(outputLayer.neurons[i].sum) * hiddenLayer.neurons[j].value;
+                outputWeights[i* hiddenLayer.neurons.length+j] += LEARNING_STEP * outputLayer.neurons[i].error * transfertDerivative(outputLayer.neurons[i].sum) * hiddenLayer.neurons[j].value;
             }
         }
     }

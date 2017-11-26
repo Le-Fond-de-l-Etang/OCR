@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ImageReader {
     /**
-     * Convert all the images of a folder into arrays. Use the first char of the file as matching value.
+     * Convert all the images of a folder into arrays. Use the first char of the file name as matching value.
      * @param path Path of the folder containing images
      * @return Map associating characters with array of doubles.
      */
@@ -54,7 +54,7 @@ public class ImageReader {
     }
 
     /**
-     * Convert an image to an array of lightness values
+     * Convert an image to an array of lightness (HSB) values
      * @param image Image to read
      * @return Array of values for each pixel
      */
