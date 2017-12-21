@@ -19,7 +19,7 @@ public class FontCharacterExtractor {
         for (String font : learningFonts) {
             for (char character : CharacterMapping.recognizedCharacters) {
                 BufferedImage characterImage = converCharToBufferedImage(character, font, 24);
-                ImageReader.writeImageToDisk(characterImage, "test.png");
+                //ImageReader.writeImageToDisk(characterImage, "test.png");
                 double[] array = ImageReader.transformImageToArray(characterImage);
                 processedChars.put(character, array);
             }
