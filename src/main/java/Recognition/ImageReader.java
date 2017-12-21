@@ -14,7 +14,7 @@ public class ImageReader {
      * @param path Path of the folder containing images
      * @return Map associating characters with array of doubles.
      */
-    public Map<Character, double[]> readImagesFromFolder(String path, int imageWidth, int imageHeight) {
+    public static Map<Character, double[]> readImagesFromFolder(String path, int imageWidth, int imageHeight) {
         Map<Character, double[]> images = new HashMap<>();
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
@@ -28,16 +28,6 @@ public class ImageReader {
                 try {
                     BufferedImage originalImage = getImageFromFile(listOfFiles[i]);
                     BufferedImage image = resizeImage(originalImage, imageWidth, imageHeight);
-
-
-                    /*File dir = new File("test/");
-                    dir.mkdir();
-                    File outputFile = new File("images/"+character+"-image.png");
-                    try {
-                        ImageIO.write(image, "png", outputFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
 
                     if (image != null) {
                         double[] imageArray = transformImageToArray(image);
@@ -53,13 +43,15 @@ public class ImageReader {
         return images;
     }
 
+
+
     /**
      * Get a buffered image from a file
      * @param file Image file
      * @return Image
      * @throws IOException File can't be read as an image
      */
-    private BufferedImage getImageFromFile(File file) throws IOException {
+    private static BufferedImage getImageFromFile(File file) throws IOException {
         BufferedImage image = null;
         image = ImageIO.read(file);
         return image;
@@ -70,7 +62,7 @@ public class ImageReader {
      * @param image Image to read
      * @return Array of values for each pixel
      */
-    private double[] transformImageToArray(BufferedImage image) {
+    public static double[] transformImageToArray(BufferedImage image) {
         float hsv[] = new float[3];
         double[] array = new double[image.getWidth() * image.getHeight()];
         for (int x=0 ; x<image.getWidth(); x++) {
@@ -90,7 +82,7 @@ public class ImageReader {
      * @param height New height
      * @return Resized image
      */
-    private BufferedImage resizeImage(BufferedImage imageOrigin, int width, int height) {
+    private static BufferedImage resizeImage(BufferedImage imageOrigin, int width, int height) {
         Image image = imageOrigin.getScaledInstance(width, height, Image.SCALE_DEFAULT);
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
@@ -99,5 +91,23 @@ public class ImageReader {
         graphics.dispose();
 
         return resizedImage;
+    }
+
+
+
+    /**
+     * Write an image file to disk
+     * @param image Image to save
+     * @param name Name with png extension
+     */
+    public static void writeImageToDisk(BufferedImage image, String name) {
+        File dir = new File("test/");
+        dir.mkdir();
+        File outputFile = new File("images/"+name);
+        try {
+            ImageIO.write(image, "png", outputFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

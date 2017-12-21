@@ -8,53 +8,59 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FontCharacterExtractor {
-    /**
-     * Create a 91*51 image with the specified Char written in the specified font
-     * @param font font you want to use
-     * @param s Character to print
-     * @return
-     */
-    private static BufferedImage stringToBufferedImage(String font,String s) {
-        //First, we have to calculate the string's width and height
+    private static String[] learningFonts = {"Arial"};
 
+    public static Map<Character, double[]> readAllFonts() {
+        Map<Character, double[]> processedChars = new HashMap<>();
+        for (String font : learningFonts) {
+            for (char character : CharacterMapping.recognizedCharacters) {
+                BufferedImage characterImage = converCharToBufferedImage(character, font, 24);
+                ImageReader.writeImageToDisk(characterImage, "test.png");
+                double[] array = ImageReader.transformImageToArray(characterImage);
+                processedChars.put(character, array);
+            }
+        }
+        return processedChars;
+    }
+
+    /**
+     * Create an image with the specified character written in the specified font
+     * @param character Character to print
+     * @param font Font you want to use
+     * @param size Size of the written text
+     * @return Image with given text
+     */
+    private static BufferedImage converCharToBufferedImage(char character, String font, int size) {
+        String string = character + "";
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics g = img.getGraphics();
 
-        //Set the font to be used when drawing the string
-        Font f = new Font(font, Font.PLAIN, 78);
+        Font f = new Font(font, Font.PLAIN, size);
         g.setFont(f);
 
-        //Get the string visual bounds
+        // Get the string visual bounds
         FontRenderContext frc = g.getFontMetrics().getFontRenderContext();
-        Rectangle2D rect = f.getStringBounds(s, frc);
-        //Release resources
+        Rectangle2D rect = f.getStringBounds(string, frc);
         g.dispose();
 
-        //Then, we have to draw the string on the final image
-
-        //Create a new image where to print the character
+        // Draw the string on the final image
         img = new BufferedImage((int) Math.ceil(rect.getHeight()), (int) Math.ceil(rect.getHeight()), BufferedImage.TYPE_4BYTE_ABGR);
         g = img.getGraphics();
-        g.setColor(Color.black); //Otherwise the text would be white
+        g.setColor(Color.black);
         g.setFont(f);
 
         //Calculate x and y for that string
         FontMetrics fm = g.getFontMetrics();
+        int x = (int) Math.round(rect.getHeight()/2 - fm.stringWidth(string)/2 );
+        int y = fm.getAscent();
 
-
-        int x = (int) Math.round(rect.getHeight()/2 - fm.stringWidth(s)/2 );
-        int y = fm.getAscent(); //getAscent() = baseline
-
-        g.drawString(s, x, y);
-
-        //Release resources
+        g.drawString(string, x, y);
         g.dispose();
-
-        //Return the image
         return img;
-
     }
 
     /**
@@ -66,8 +72,7 @@ public class FontCharacterExtractor {
         for(int i=65;i<=90;i++) {
 
             char c = (char)i ;
-            String s = Character.toString(c);
-            extractChar(font,s);
+            extractChar(font,c);
         }
     }
 /**
@@ -78,7 +83,7 @@ public class FontCharacterExtractor {
 
             char c = (char)i ;
             String s = Character.toString(c);
-            extractChar(font,s);
+            extractChar(font,c);
         }
     }
 
@@ -89,8 +94,7 @@ public class FontCharacterExtractor {
     public static void extractNumChar(String font){
         for(int i=48;i<=57;i++) {
             char c = (char)i ;
-            String s = Character.toString(c);
-            extractChar(font,s);
+            extractChar(font,c);
         }
     }
 
@@ -99,9 +103,9 @@ public class FontCharacterExtractor {
      * @param font font you want to use
      * @param s character to write
      */
-    private static void extractChar(String font,String s){
+    private static void extractChar(String font,char s){
 
-        BufferedImage imageNumber = stringToBufferedImage(font,s);
+        BufferedImage imageNumber = converCharToBufferedImage(s, font, 78);
         File dir = new File("images/"+font);
         if (!dir.exists()) {
             dir.mkdir();

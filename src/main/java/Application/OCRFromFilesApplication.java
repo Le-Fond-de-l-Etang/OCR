@@ -3,12 +3,11 @@ package Application;
 import NeuronNetwork.Neuron;
 import NeuronNetwork.Perceptron;
 import Recognition.CharacterMapping;
-import Recognition.FontCharacterExtractor;
 import Recognition.ImageReader;
 
 import java.util.Map;
 
-public class OCRApplication {
+public class OCRFromFilesApplication {
     public static int INPUT_WIDTH = 40;
     public static int INPUT_HEIGHT = 48;
     public static int INPUT_SIZE = INPUT_WIDTH * INPUT_HEIGHT;
@@ -17,21 +16,18 @@ public class OCRApplication {
     public static void main(String[] args) {
         Perceptron perceptron = new Perceptron(INPUT_SIZE, new int[]{100}, OUTPUT_SIZE);
 
-        Map<Character, double[]> learningArrays = FontCharacterExtractor.readAllFonts();
+        ImageReader imageReader = new ImageReader();
+        Map<Character, double[]> characters = imageReader.readImagesFromFolder("./images/", INPUT_WIDTH, INPUT_HEIGHT);
 
-        System.out.println("Learning stuff...");
-        for (int i=0; i<50000; i++) {
-            for (Map.Entry<Character, double[]> entry : learningArrays.entrySet()) {
+        for (int i=0; i<5000; i++) {
+            for (Map.Entry<Character, double[]> entry : characters.entrySet()) {
                 if (entry.getValue().length == INPUT_SIZE) {
                     double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
                     Neuron[] outputNeurons = perceptron.learn(entry.getValue(), expectedOutput);
                 }
             }
         }
-        System.out.println("Learning finished !");
-
-        Map<Character, double[]> testingArrays = ImageReader.readImagesFromFolder("./images/", INPUT_WIDTH, INPUT_HEIGHT);
-        for (Map.Entry<Character, double[]> entry : testingArrays.entrySet()) {
+        for (Map.Entry<Character, double[]> entry : characters.entrySet()) {
             if (entry.getValue().length == INPUT_SIZE) {
                 double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
                 Neuron[] outputNeurons = perceptron.learn(entry.getValue(), expectedOutput);

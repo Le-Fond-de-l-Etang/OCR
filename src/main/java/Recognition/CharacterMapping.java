@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class CharacterMapping {
+    /** Characters the OCR can handle   **/
+    public static char[] recognizedCharacters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
     /**
      * Mapping output neuron number with a character
      */
@@ -12,16 +14,11 @@ public class CharacterMapping {
     private static Map<Integer, Character> loadCharacters()
     {
         Map<Integer, Character> map = new HashMap<>();
-        map.put(0, '0');
-        map.put(1, '1');
-        map.put(2, '2');
-        map.put(3, '3');
-        map.put(4, '4');
-        map.put(5, '5');
-        map.put(6, '6');
-        map.put(7, '7');
-        map.put(8, '8');
-        map.put(9, '9');
+        int neuronNumber = 0;
+        for(char character : recognizedCharacters) {
+            map.put(neuronNumber, character);
+            neuronNumber++;
+        }
         return map;
     }
 
