@@ -68,12 +68,9 @@ public class ImageReader {
         for (int x=0 ; x<image.getWidth(); x++) {
             for (int y=0; y<image.getHeight(); y++) {
                 int rgb = image.getRGB(x, y);
-                if ((rgb>>24) == 0x00) {
-                    array[y * image.getWidth() + x] = 1;
-                } else {
-                    Color.RGBtoHSB((rgb >> 16) & 0xff, (rgb >> 8) & 0xff, rgb & 0xff, hsv);
-                    array[y * image.getWidth() + x] = hsv[2];
-                }
+                double alpha = ((rgb & 0xff000000) >>> 24)/255;
+                Color.RGBtoHSB((rgb >> 16) & 0xff, (rgb >> 8) & 0xff, rgb & 0xff, hsv);
+                array[y * image.getWidth() + x] = alpha * (1-hsv[2]);
             }
         }
         return array;

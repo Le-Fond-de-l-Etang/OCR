@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FontCharacterExtractor {
-    private static String[] learningFonts = {"Arial"};
+    private static String[] learningFonts = {"Arial", "Calibri", "Times New Roman"};
 
     public static Map<Character, double[]> readAllFonts() {
         Map<Character, double[]> processedChars = new HashMap<>();
