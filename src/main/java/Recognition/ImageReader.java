@@ -14,7 +14,7 @@ public class ImageReader {
      * @param path Path of the folder containing images
      * @return Map associating characters with array of doubles.
      */
-    public Map<Character, double[]> readImagesFromFolder(String path) {
+    public Map<Character, double[]> readImagesFromFolder(String path, int imageWidth, int imageHeight) {
         Map<Character, double[]> images = new HashMap<>();
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
@@ -26,7 +26,19 @@ public class ImageReader {
             if (listOfFiles[i].isFile()) {
                 char character = listOfFiles[i].getName().charAt(0);
                 try {
-                    BufferedImage image = getImageFromFile(listOfFiles[i]);
+                    BufferedImage originalImage = getImageFromFile(listOfFiles[i]);
+                    BufferedImage image = resizeImage(originalImage, imageWidth, imageHeight);
+
+
+                    /*File dir = new File("test/");
+                    dir.mkdir();
+                    File outputFile = new File("images/"+character+"-image.png");
+                    try {
+                        ImageIO.write(image, "png", outputFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
+
                     if (image != null) {
                         double[] imageArray = transformImageToArray(image);
                         images.put(character, imageArray);
@@ -69,5 +81,23 @@ public class ImageReader {
             }
         }
         return array;
+    }
+
+    /**
+     * Resize image with given width and height
+     * @param imageOrigin Image to resize
+     * @param width New width
+     * @param height New height
+     * @return Resized image
+     */
+    private BufferedImage resizeImage(BufferedImage imageOrigin, int width, int height) {
+        Image image = imageOrigin.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D graphics = resizedImage.createGraphics();
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
+
+        return resizedImage;
     }
 }
