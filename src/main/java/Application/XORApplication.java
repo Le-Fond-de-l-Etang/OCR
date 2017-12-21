@@ -2,9 +2,20 @@ package Application;
 
 import NeuronNetwork.Neuron;
 import NeuronNetwork.Perceptron;
+import Recognition.FontCharacterExtractor;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+
 
 public class XORApplication {
     public static void main(String[] args) {
+
+        FontCharacterExtractor.extractMajChar("Ubuntu");
+        FontCharacterExtractor.extractminChar("Ubuntu");
+        FontCharacterExtractor.extractNumChar("Ubuntu");
+
         Perceptron perceptron = new Perceptron(2, 3, 1);
         Neuron[] result1, result2, result3, result4;
         int i = 0;

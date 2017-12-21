@@ -14,7 +14,7 @@ public class OCRApplication {
         ImageReader imageReader = new ImageReader();
         Map<Character, double[]> characters = imageReader.readImagesFromFolder("./images/");
 
-        for (int i=0; i<500; i++) {
+        for (int i=0; i<5000; i++) {
             for (Map.Entry<Character, double[]> entry : characters.entrySet()) {
                 if (entry.getValue().length == 30) {
                     double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
