@@ -3,24 +3,18 @@ package NeuronNetwork;
 public class Perceptron {
     private double LEARNING_STEP = 0.5;
 
-    private double inputWeights[];
-    private double outputWeights[];
     private double[][] weights;
 
     private NeuronLayer inputLayer;
     private NeuronLayer hiddenLayer[];
     private NeuronLayer outputLayer;
 
-    public Perceptron(int inputSize, int hiddenSize, int outputSize) {
-        inputLayer = new NeuronLayer(inputSize);
-        hiddenLayer = new NeuronLayer[]{ new NeuronLayer(hiddenSize) };
-        outputLayer = new NeuronLayer(outputSize);
-        weights = new double[2][];
-        weights[0] = new double[inputSize * hiddenSize];
-        weights[1] = new double[hiddenSize * outputSize];
-        initializeWeights();
-    }
-
+    /**
+     * Initialise un réseau de neurones
+     * @param inputSize Taille de la couche de neurones d'entrées
+     * @param hiddenSizes Tableau de tailles de la ou des couches de neurones cachées
+     * @param outputSize Taille de la couche de neurones de sortie
+     */
     public Perceptron(int inputSize, int[] hiddenSizes, int outputSize) {
         inputLayer = new NeuronLayer(inputSize);
         hiddenLayer = new NeuronLayer[hiddenSizes.length];
@@ -54,6 +48,7 @@ public class Perceptron {
 
     /**
      * Fonction de propagation qui recalcule les sommes et les valeurs des neurones à partir des poids
+     * @param inputNeuronValues Nouvelle couche de neurones d'entrée
      */
     private void propagate(double inputNeuronValues[]) {
         int x = 0;
@@ -70,6 +65,9 @@ public class Perceptron {
 
     /**
      * Fonction de propagation entre deux couches précises
+     * @param inLayer Couche d'entrée
+     * @param outLayer Couche de sortie
+     * @param weights Poids applicables entre la couche d'entrée et de sortie
      */
     private void calculateLayer(NeuronLayer inLayer, NeuronLayer outLayer, double[] weights) {
         for (int j = 0; j< outLayer.neurons.length; j++) {
@@ -98,6 +96,9 @@ public class Perceptron {
 
     /**
      * Calcule les marges d'erreurs entre deux couches
+     * @param inLayer Couche d'entrée
+     * @param outLayer Couche de sortie
+     * @param weights Poids applicables entre les deux couches
      */
     private void calculateErrorMargins(NeuronLayer inLayer, NeuronLayer outLayer, double[] weights) {
         for (int i = 0; i< inLayer.neurons.length; i++) {
@@ -122,6 +123,9 @@ public class Perceptron {
 
     /**
      * Recalcule les poids entre deux couches à partir de la couche de sortie
+     * @param weights Poids à recalculer
+     * @param inLayer Couche de neurones d'entrée
+     * @param outLayer Couche de neurones de sortie
      */
     private void recalculateWeights(double[] weights, NeuronLayer inLayer, NeuronLayer outLayer) {
         for (int i = 0; i< outLayer.neurons.length; i++) {

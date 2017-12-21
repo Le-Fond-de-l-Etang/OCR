@@ -14,7 +14,7 @@ public class OCRApplication {
     public static int OUTPUT_SIZE = 10;
 
     public static void main(String[] args) {
-        Perceptron perceptron = new Perceptron(INPUT_SIZE, new int[]{(INPUT_SIZE+OUTPUT_SIZE)/2}, OUTPUT_SIZE);
+        Perceptron perceptron = new Perceptron(INPUT_SIZE, new int[]{100}, OUTPUT_SIZE);
 
         ImageReader imageReader = new ImageReader();
         Map<Character, double[]> characters = imageReader.readImagesFromFolder("./images/", INPUT_WIDTH, INPUT_HEIGHT);
