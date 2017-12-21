@@ -15,8 +15,7 @@ public class XORApplication {
         FontCharacterExtractor.extractMajChar("Ubuntu");
         FontCharacterExtractor.extractminChar("Ubuntu");
         FontCharacterExtractor.extractNumChar("Ubuntu");
-
-        Perceptron perceptron = new Perceptron(2, 3, 1);
+        Perceptron perceptron = new Perceptron(2, new int[]{3}, 1);
         Neuron[] result1, result2, result3, result4;
         int i = 0;
         do {

@@ -8,22 +8,27 @@ import Recognition.ImageReader;
 import java.util.Map;
 
 public class OCRApplication {
+    public static int INPUT_WIDTH = 15;
+    public static int INPUT_HEIGHT = 18;
+    public static int INPUT_SIZE = INPUT_WIDTH * INPUT_HEIGHT;
+    public static int OUTPUT_SIZE = 10;
+
     public static void main(String[] args) {
-        Perceptron perceptron = new Perceptron(30, 25, 10);
+        Perceptron perceptron = new Perceptron(INPUT_SIZE, new int[]{100}, OUTPUT_SIZE);
 
         ImageReader imageReader = new ImageReader();
-        Map<Character, double[]> characters = imageReader.readImagesFromFolder("./images/");
+        Map<Character, double[]> characters = imageReader.readImagesFromFolder("./images/", INPUT_WIDTH, INPUT_HEIGHT);
 
         for (int i=0; i<5000; i++) {
             for (Map.Entry<Character, double[]> entry : characters.entrySet()) {
-                if (entry.getValue().length == 30) {
+                if (entry.getValue().length == INPUT_SIZE) {
                     double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
                     Neuron[] outputNeurons = perceptron.learn(entry.getValue(), expectedOutput);
                 }
             }
         }
         for (Map.Entry<Character, double[]> entry : characters.entrySet()) {
-            if (entry.getValue().length == 30) {
+            if (entry.getValue().length == INPUT_SIZE) {
                 double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
                 Neuron[] outputNeurons = perceptron.learn(entry.getValue(), expectedOutput);
                 System.out.println("Entry character is " + entry.getKey() + ".");
