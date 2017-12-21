@@ -39,7 +39,7 @@ public class Perceptron {
     private void initializeWeights() {
         for (int i=0; i<weights.length; i++) {
             for (int j=0; j<weights[i].length; j++) {
-                weights[i][j] = Math.random();
+                weights[i][j] = Math.random()/100;
             }
         }
     }

@@ -8,8 +8,8 @@ import Recognition.ImageReader;
 import java.util.Map;
 
 public class OCRApplication {
-    public static int INPUT_WIDTH = 5;
-    public static int INPUT_HEIGHT = 6;
+    public static int INPUT_WIDTH = 15;
+    public static int INPUT_HEIGHT = 18;
     public static int INPUT_SIZE = INPUT_WIDTH * INPUT_HEIGHT;
     public static int OUTPUT_SIZE = 10;
 
