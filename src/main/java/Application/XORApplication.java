@@ -11,10 +11,6 @@ import java.io.IOException;
 
 public class XORApplication {
     public static void main(String[] args) {
-
-        FontCharacterExtractor.extractMajChar("Ubuntu");
-        FontCharacterExtractor.extractminChar("Ubuntu");
-        FontCharacterExtractor.extractNumChar("Ubuntu");
         Perceptron perceptron = new Perceptron(2, new int[]{3}, 1);
         Neuron[] result1, result2, result3, result4;
         int i = 0;

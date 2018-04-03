@@ -83,7 +83,7 @@ public class ImageReader {
      * @param height New height
      * @return Resized image
      */
-    private static BufferedImage resizeImage(BufferedImage imageOrigin, int width, int height) {
+    public static BufferedImage resizeImage(BufferedImage imageOrigin, int width, int height) {
         Image image = imageOrigin.getScaledInstance(width, height, Image.SCALE_DEFAULT);
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 

@@ -1,7 +1,6 @@
 package Recognition;
 
 import javax.imageio.ImageIO;
-import javax.naming.spi.DirectoryManager;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
@@ -12,15 +11,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FontCharacterExtractor {
-    private static String[] learningFonts = {"Arial", "Calibri", "Times New Roman"};
+    private static String[] learningFonts = {"Arial Black", "Roboto", "Helvetica", "Calibri"};
 
-    public static Map<Character, double[]> readAllFonts() {
+    public static Map<Character, double[]> readAllFonts(int width, int height) {
         Map<Character, double[]> processedChars = new HashMap<>();
         for (String font : learningFonts) {
+            System.out.println("Adding " + font + " font.");
             for (char character : CharacterMapping.recognizedCharacters) {
-                BufferedImage characterImage = converCharToBufferedImage(character, font, 24);
-                //ImageReader.writeImageToDisk(characterImage, "test.png");
-                double[] array = ImageReader.transformImageToArray(characterImage);
+                BufferedImage characterImage = convertCharToBufferedImage(character, font, height);
+                BufferedImage resizedImage = ImageReader.resizeImage(characterImage, width, height);
+                //ImageReader.writeImageToDisk(resizedImage, character+"");
+                double[] array = ImageReader.transformImageToArray(resizedImage);
                 processedChars.put(character, array);
             }
         }
@@ -34,7 +35,7 @@ public class FontCharacterExtractor {
      * @param size Size of the written text
      * @return Image with given text
      */
-    private static BufferedImage converCharToBufferedImage(char character, String font, int size) {
+    private static BufferedImage convertCharToBufferedImage(char character, String font, int size) {
         String string = character + "";
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics g = img.getGraphics();
@@ -105,7 +106,7 @@ public class FontCharacterExtractor {
      */
     private static void extractChar(String font,char s){
 
-        BufferedImage imageNumber = converCharToBufferedImage(s, font, 78);
+        BufferedImage imageNumber = convertCharToBufferedImage(s, font, 78);
         File dir = new File("images/"+font);
         if (!dir.exists()) {
             dir.mkdir();
