@@ -12,11 +12,12 @@ public class OCRApplication {
     public static int INPUT_WIDTH = 30;
     public static int INPUT_HEIGHT = 36;
     public static int INPUT_SIZE = INPUT_WIDTH * INPUT_HEIGHT;
+    public static int HIDDEN_SIZE = 200;
     public static int OUTPUT_SIZE = CharacterMapping.recognizedCharacters.length;
     public static int LEARNING_COUNT = 5000;
 
     public static void main(String[] args) {
-        Perceptron perceptron = new Perceptron(INPUT_SIZE, new int[]{200}, OUTPUT_SIZE);
+        Perceptron perceptron = new Perceptron(INPUT_SIZE, new int[]{HIDDEN_SIZE}, OUTPUT_SIZE);
 
 
         Map<Character, double[]> learningArrays = FontCharacterExtractor.readAllFonts(INPUT_WIDTH, INPUT_HEIGHT);

@@ -5,12 +5,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="130.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX.Controller.RootController">
+<AnchorPane prefHeight="250.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFX.Controller.RootController">
    <children>
-      <TextField layoutX="140.0" layoutY="14.0" prefHeight="26.0" prefWidth="46.0" />
-      <TextField layoutX="140.0" layoutY="50.0" prefHeight="26.0" prefWidth="46.0" />
-      <Text fx:id="imageWidth" layoutX="14.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image width (px) :" />
-      <Text fx:id="imageHeight" layoutX="14.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image height (px) :" />
-      <Button layoutX="69.0" layoutY="90.0" mnemonicParsing="false" onAction="#handleCreatePerceptron" text="Create" />
+      <Text layoutX="17.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image width (px) :" />
+      <TextField fx:id="imageWidthField" layoutX="190.0" layoutY="14.0" prefHeight="26.0" prefWidth="46.0" />
+      <Text layoutX="17.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image height (px) :" />
+      <TextField fx:id="imageHeightField" layoutX="190.0" layoutY="71.0" prefHeight="26.0" prefWidth="46.0" />
+      <Text layoutX="17.0" layoutY="147.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hidden neurons :" />
+      <TextField fx:id="hiddenSizeField" layoutX="190.0" layoutY="121.0" prefHeight="26.0" prefWidth="46.0" />
+      <Button layoutX="87.0" layoutY="184.0" mnemonicParsing="false" onAction="#handleCreatePerceptron" text="Create" />
    </children>
 </AnchorPane>
