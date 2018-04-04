@@ -35,6 +35,7 @@ public class RootController {
             popupScene = new Scene(popupLayout);
             // Create dialog box
             final Stage dialog = new Stage();
+            dialog.setTitle("New perceptron");
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(GUIApplication.primaryStage);
             dialog.setScene(popupScene);
@@ -66,6 +67,7 @@ public class RootController {
             Scene aboutScene = new Scene(popupLayout);
             // Create dialog box
             final Stage dialog = new Stage();
+            dialog.setTitle("About");
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(GUIApplication.primaryStage);
             dialog.setScene(aboutScene);

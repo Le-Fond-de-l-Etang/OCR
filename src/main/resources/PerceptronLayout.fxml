@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -11,24 +14,31 @@
    <children>
       <TabPane prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="Perceptron creation">
+          <Tab text="Learning">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TextField layoutX="117.0" layoutY="14.0" />
-                        <Text layoutX="14.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image width :" />
-                        <TextField layoutX="117.0" layoutY="51.0" />
-                        <Text layoutX="14.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image height :" />
-                        <Text layoutX="300.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="px" />
-                        <Text layoutX="300.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="px" />
-                        <Button layoutX="14.0" layoutY="89.0" mnemonicParsing="false" text="Generate" />
-                     </children>
-                  </AnchorPane>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="600.0">
+                 <children>
+                     <ScrollPane layoutY="57.0" prefHeight="300.0">
+                         <AnchorPane fx:id="fontListPane" layoutX="14.0" layoutY="57.0" prefHeight="310.0" prefWidth="600.0">
+                              <children>
+                                 <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please create a perceptron first." />
+                              </children>
+                         </AnchorPane>
+                     </ScrollPane>
+                    <ChoiceBox fx:id="fontSelector" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="332.0" />
+                    <TextField fx:id="learningCountField" layoutX="361.0" layoutY="14.0" prefHeight="26.0" prefWidth="150.0" promptText="Learning count" />
+                    <Button fx:id="learnButton" disable="true" layoutX="531.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLearn" text="Learn" />
+                 </children>
+              </AnchorPane>
             </content>
           </Tab>
-          <Tab text="Learning phase">
+          <Tab text="Testing">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                 <AnchorPane layoutX="14.0" layoutY="14.0">
+                     <Canvas fx:id="drawCanvas" layoutX="14.0" layoutY="14.0" height="200.0" width="200.0" />
+                 </AnchorPane>
+              </ScrollPane>
             </content>
           </Tab>
         </tabs>

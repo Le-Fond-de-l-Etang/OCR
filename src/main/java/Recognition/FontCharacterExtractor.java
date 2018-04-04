@@ -28,6 +28,18 @@ public class FontCharacterExtractor {
         return processedChars;
     }
 
+    public static Map<Character, double[]> readFont(String font, int width, int height) {
+        Map<Character, double[]> processedChars = new HashMap<>();
+        System.out.println("Adding " + font + " font.");
+        for (char character : CharacterMapping.recognizedCharacters) {
+            BufferedImage characterImage = convertCharToBufferedImage(character, font, height);
+            BufferedImage resizedImage = ImageReader.resizeImage(characterImage, width, height);
+            double[] array = ImageReader.transformImageToArray(resizedImage);
+            processedChars.put(character, array);
+        }
+        return processedChars;
+    }
+
     /**
      * Create an image with the specified character written in the specified font
      * @param character Character to print
