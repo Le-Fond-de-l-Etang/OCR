@@ -8,6 +8,7 @@ import Recognition.ImageReader;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,10 +28,8 @@ import javafx.scene.text.Text;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class PerceptronController {
     @FXML
@@ -97,10 +96,9 @@ public class PerceptronController {
         String selectedFont = (String)fontSelector.getValue();
         System.out.println(String.format("Learning phase ! (%s, %d)", selectedFont, learningCount));
         // Learning phase
-        final ObservableList<Node> fontListPaneNodes = fontListPane.getChildren();
-        Platform.runLater(new Runnable(){
+        Task<Integer> task = new Task<Integer>() {
             @Override
-            public void run() {
+            protected Integer call() {
                 Map<Character, double[]> learningArrays = FontCharacterExtractor.readFont(selectedFont, PerceptronController.imageWidth, PerceptronController.imageHeight);
                 for (int i=0; i<learningCount; i++) {
                     learnProgress.setProgress((double)++i / (double)learningCount);
@@ -111,27 +109,19 @@ public class PerceptronController {
                         }
                     }
                 }
-                Text fontText = new Text(selectedFont + " - " + learningCount);
-                fontText.setY(fontListPane.getChildren().size() * 20 + 20);
-                fontListPaneNodes.addAll(fontText);
-            }
-        });
-        /*new Thread(() -> {
-            Map<Character, double[]> learningArrays = FontCharacterExtractor.readFont(selectedFont, PerceptronController.imageWidth, PerceptronController.imageHeight);
-            for (int i=0; i<learningCount; i++) {
-                learnProgress.setProgress((double)++i / (double)learningCount);
-                for (Map.Entry<Character, double[]> entry : learningArrays.entrySet()) {
-                    if (entry.getValue().length == PerceptronController.imageWidth * PerceptronController.imageHeight) {
-                        double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
-                        perceptron.learn(entry.getValue(), expectedOutput);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Text fontText = new Text(selectedFont + " - " + learningCount);
+                        fontText.setY(fontListPane.getChildren().size() * 20 + 20);
+                        fontText.setX(20);
+                        fontListPane.getChildren().addAll(fontText);
                     }
-                }
+                });
+                return 0;
             }
-            Text fontText = new Text(selectedFont + " - " + learningCount);
-            fontText.setY(fontListPane.getChildren().size() * 20 + 20);
-            fontListPaneNodes.addAll(fontText);
-            learnProgress.setDisable(true);
-        }).start();*/
+        };
+        new Thread(task).start();
     }
 
     private void prepareCanvas() {
@@ -191,23 +181,16 @@ public class PerceptronController {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(writableImage, null);
         double[] imageArray = ImageReader.transformImageToArray(bufferedImage);
         Neuron[] outputNeurons = perceptron.propagate(imageArray);
-        Map<Double, Character> matchingCharacters = CharacterMapping.getCharactersForArray(Neuron.getNeuronValues(outputNeurons));
-        String guessString = "Your character is a ";
-        int foundCount = 0;
-        for(Map.Entry<Double, Character> charEntry : matchingCharacters.entrySet()) {
-            System.out.println(charEntry.getKey() + " - " + charEntry.getValue());
-            if (charEntry.getKey() > 0.5) {
-                if (foundCount > 0) {
-                    guessString += ", or a ";
-                }
-                guessString += charEntry.getValue() + " (" + charEntry.getKey() + ") ";
-                foundCount++;
-            }
-        }
-        if (foundCount > 0) {
-            guessText.setText(guessString);
+        NavigableMap<Double, Character> matchingCharacters = CharacterMapping.getCharactersForArray(Neuron.getNeuronValues(outputNeurons));
+        Map.Entry<Double, Character> lastEntry = matchingCharacters.lastEntry();
+        if (lastEntry.getKey() >= 0.75) {
+            guessText.setText("Your character is a " + lastEntry.getValue());
+        } else if (lastEntry.getKey() >= 0.5) {
+            guessText.setText("Your character is probably a " + lastEntry.getValue());
+        } else if (lastEntry.getKey() >= 0.25) {
+            guessText.setText("Your character might be a " + lastEntry.getValue());
         } else {
-            guessText.setText("Unknown character");
+            guessText.setText("Your character could be a " + lastEntry.getValue());
         }
     }
 }

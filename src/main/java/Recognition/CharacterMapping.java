@@ -75,7 +75,7 @@ public class CharacterMapping {
      * @param array Array from perceptron
      * @return Map of possible characters with probabilities
      */
-    public static Map<Double, Character> getCharactersForArray(double[] array) {
+    public static TreeMap<Double, Character> getCharactersForArray(double[] array) {
         Map<Double, Character> map = new HashMap<>();
         for (int i=0; i<array.length; i++) {
             map.put(array[i], getMatchingKeyCharacter(i));
