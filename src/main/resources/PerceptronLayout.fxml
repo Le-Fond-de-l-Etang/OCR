@@ -3,6 +3,7 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -25,18 +26,22 @@
                               </children>
                          </AnchorPane>
                      </ScrollPane>
-                    <ChoiceBox fx:id="fontSelector" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="332.0" />
-                    <TextField fx:id="learningCountField" layoutX="361.0" layoutY="14.0" prefHeight="26.0" prefWidth="150.0" promptText="Learning count" />
-                    <Button fx:id="learnButton" disable="true" layoutX="531.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLearn" text="Learn" />
+                    <ChoiceBox fx:id="fontSelector" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="228.0" />
+                    <TextField fx:id="learningCountField" layoutX="249.0" layoutY="14.0" prefHeight="26.0" prefWidth="119.0" promptText="Learning count" />
+                    <Button fx:id="learnButton" disable="true" layoutX="375.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLearn" text="Learn" />
+                    <ProgressBar fx:id="learnProgress" layoutX="439.0" layoutY="17.0" prefHeight="20.0" prefWidth="147.0" progress="0.0" />
                  </children>
               </AnchorPane>
             </content>
           </Tab>
           <Tab text="Testing">
             <content>
-              <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                 <AnchorPane layoutX="14.0" layoutY="14.0">
-                     <Canvas fx:id="drawCanvas" layoutX="14.0" layoutY="14.0" height="200.0" width="200.0" />
+              <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="480.0">
+                 <AnchorPane layoutX="14.0" layoutY="50.0" prefHeight="250.0" prefWidth="600.0">
+                    <Canvas fx:id="drawCanvas" height="200.0" layoutX="14.0" layoutY="50.0" width="200.0" />
+                    <Button fx:id="guessButton" disable="true" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleGuess" text="Guess" />
+                    <Text fx:id="guessText" layoutX="107.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please create a perceptron first." />
+                     <Button layoutX="534.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleClear" text="Clear" />
                  </AnchorPane>
               </ScrollPane>
             </content>

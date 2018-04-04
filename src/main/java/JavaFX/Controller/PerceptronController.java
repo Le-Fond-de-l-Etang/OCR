@@ -1,17 +1,24 @@
 package JavaFX.Controller;
 
+import NeuronNetwork.Neuron;
 import NeuronNetwork.Perceptron;
 import Recognition.CharacterMapping;
 import Recognition.FontCharacterExtractor;
+import Recognition.ImageReader;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -19,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +42,13 @@ public class PerceptronController {
     @FXML
     Button learnButton;
     @FXML
+    ProgressBar learnProgress;
+    @FXML
     Canvas drawCanvas;
+    @FXML
+    Button guessButton;
+    @FXML
+    Text guessText;
 
     private static PerceptronController perceptronController;
     private static Perceptron perceptron;
@@ -46,6 +60,8 @@ public class PerceptronController {
         PerceptronController.imageHeight = imageHeight;
         perceptronController.learnButton.setDisable(false);
         perceptronController.fontListPane.getChildren().clear();
+        perceptronController.guessButton.setDisable(false);
+        perceptronController.guessText.setText("Draw a character and hit the Guess button.");
         perceptronController.drawCanvas.setWidth(imageWidth);
         perceptronController.drawCanvas.setHeight(imageHeight);
         perceptronController.prepareCanvas();
@@ -81,22 +97,46 @@ public class PerceptronController {
         String selectedFont = (String)fontSelector.getValue();
         System.out.println(String.format("Learning phase ! (%s, %d)", selectedFont, learningCount));
         // Learning phase
-        Map<Character, double[]> learningArrays = FontCharacterExtractor.readFont(selectedFont, PerceptronController.imageWidth, PerceptronController.imageHeight);
-        for (int i=0; i<learningCount; i++) {
-            for (Map.Entry<Character, double[]> entry : learningArrays.entrySet()) {
-                if (entry.getValue().length == PerceptronController.imageWidth * PerceptronController.imageHeight) {
-                    double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
-                    perceptron.learn(entry.getValue(), expectedOutput);
+        final ObservableList<Node> fontListPaneNodes = fontListPane.getChildren();
+        Platform.runLater(new Runnable(){
+            @Override
+            public void run() {
+                Map<Character, double[]> learningArrays = FontCharacterExtractor.readFont(selectedFont, PerceptronController.imageWidth, PerceptronController.imageHeight);
+                for (int i=0; i<learningCount; i++) {
+                    learnProgress.setProgress((double)++i / (double)learningCount);
+                    for (Map.Entry<Character, double[]> entry : learningArrays.entrySet()) {
+                        if (entry.getValue().length == PerceptronController.imageWidth * PerceptronController.imageHeight) {
+                            double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
+                            perceptron.learn(entry.getValue(), expectedOutput);
+                        }
+                    }
+                }
+                Text fontText = new Text(selectedFont + " - " + learningCount);
+                fontText.setY(fontListPane.getChildren().size() * 20 + 20);
+                fontListPaneNodes.addAll(fontText);
+            }
+        });
+        /*new Thread(() -> {
+            Map<Character, double[]> learningArrays = FontCharacterExtractor.readFont(selectedFont, PerceptronController.imageWidth, PerceptronController.imageHeight);
+            for (int i=0; i<learningCount; i++) {
+                learnProgress.setProgress((double)++i / (double)learningCount);
+                for (Map.Entry<Character, double[]> entry : learningArrays.entrySet()) {
+                    if (entry.getValue().length == PerceptronController.imageWidth * PerceptronController.imageHeight) {
+                        double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
+                        perceptron.learn(entry.getValue(), expectedOutput);
+                    }
                 }
             }
-        }
-        Text fontText = new Text(selectedFont + " - " + learningCount);
-        fontText.setY(fontListPane.getChildren().size() * 20 + 20);
-        fontListPane.getChildren().addAll(fontText);
+            Text fontText = new Text(selectedFont + " - " + learningCount);
+            fontText.setY(fontListPane.getChildren().size() * 20 + 20);
+            fontListPaneNodes.addAll(fontText);
+            learnProgress.setDisable(true);
+        }).start();*/
     }
 
     private void prepareCanvas() {
         final GraphicsContext graphicsContext = drawCanvas.getGraphicsContext2D();
+        graphicsContext.setLineWidth(drawCanvas.getHeight()/15);
         graphicsContext.setFill(Color.WHITE);
         graphicsContext.fillRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight());
         drawCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED,
@@ -115,10 +155,8 @@ public class PerceptronController {
                     public void handle(MouseEvent event) {
                         if (event.getButton() == MouseButton.PRIMARY) {
                             graphicsContext.setStroke(Color.BLACK);
-                            graphicsContext.setLineWidth(drawCanvas.getHeight()/12);
                         } else if (event.getButton() == MouseButton.SECONDARY) {
                             graphicsContext.setStroke(Color.WHITE);
-                            graphicsContext.setLineWidth(drawCanvas.getHeight()/6);
                         } else {
                             return;
                         }
@@ -138,5 +176,38 @@ public class PerceptronController {
                         graphicsContext.closePath();
                     }
                 });
+    }
+
+    @FXML
+    private void handleClear() {
+        prepareCanvas();
+    }
+
+    @FXML
+    private void handleGuess() {
+        System.out.println("Guessing time !");
+        WritableImage writableImage = new WritableImage((int)drawCanvas.getWidth(), (int)drawCanvas.getHeight());
+        drawCanvas.snapshot(null, writableImage);
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(writableImage, null);
+        double[] imageArray = ImageReader.transformImageToArray(bufferedImage);
+        Neuron[] outputNeurons = perceptron.propagate(imageArray);
+        Map<Double, Character> matchingCharacters = CharacterMapping.getCharactersForArray(Neuron.getNeuronValues(outputNeurons));
+        String guessString = "Your character is a ";
+        int foundCount = 0;
+        for(Map.Entry<Double, Character> charEntry : matchingCharacters.entrySet()) {
+            System.out.println(charEntry.getKey() + " - " + charEntry.getValue());
+            if (charEntry.getKey() > 0.5) {
+                if (foundCount > 0) {
+                    guessString += ", or a ";
+                }
+                guessString += charEntry.getValue() + " (" + charEntry.getKey() + ") ";
+                foundCount++;
+            }
+        }
+        if (foundCount > 0) {
+            guessText.setText(guessString);
+        } else {
+            guessText.setText("Unknown character");
+        }
     }
 }

@@ -30,7 +30,6 @@ public class FontCharacterExtractor {
 
     public static Map<Character, double[]> readFont(String font, int width, int height) {
         Map<Character, double[]> processedChars = new HashMap<>();
-        System.out.println("Adding " + font + " font.");
         for (char character : CharacterMapping.recognizedCharacters) {
             BufferedImage characterImage = convertCharToBufferedImage(character, font, height);
             BufferedImage resizedImage = ImageReader.resizeImage(characterImage, width, height);

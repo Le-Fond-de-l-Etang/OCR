@@ -50,7 +50,7 @@ public class Perceptron {
      * Fonction de propagation qui recalcule les sommes et les valeurs des neurones à partir des poids
      * @param inputNeuronValues Nouvelle couche de neurones d'entrée
      */
-    private void propagate(double inputNeuronValues[]) {
+    public Neuron[] propagate(double inputNeuronValues[]) {
         int x = 0;
         for (double inputNeuronValue : inputNeuronValues) {
             inputLayer.neurons[x].value = inputNeuronValue;
@@ -61,6 +61,7 @@ public class Perceptron {
             calculateLayer(hiddenLayer[i-1], hiddenLayer[i], weights[i]);
         }
         calculateLayer(hiddenLayer[hiddenLayer.length-1], outputLayer, weights[weights.length-1]);
+        return outputLayer.neurons;
     }
 
     /**

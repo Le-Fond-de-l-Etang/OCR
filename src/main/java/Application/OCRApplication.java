@@ -40,7 +40,6 @@ public class OCRApplication {
             if (entry.getValue().length == INPUT_SIZE) {
                 double[] expectedOutput = CharacterMapping.getArrayForCharacter(entry.getKey());
                 Neuron[] outputNeurons = perceptron.learn(entry.getValue(), expectedOutput);
-                System.out.println("Entry character is " + entry.getKey() + ".");
                 Map<Double, Character> matchingCharacters = CharacterMapping.getCharactersForArray(Neuron.getNeuronValues(outputNeurons));
                 for(Map.Entry<Double, Character> charEntry : matchingCharacters.entrySet()) {
                     if (charEntry.getKey() > 0.5) {
