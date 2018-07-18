@@ -28,6 +28,7 @@ import javafx.scene.text.Text;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class PerceptronController {
     private static int imageWidth, imageHeight;
 
     public static void createPerceptron(int imageWidth, int imageHeight, int hiddenNeuronsCount) {
-        PerceptronController.perceptron = new Perceptron(imageWidth * imageHeight, new int[]{hiddenNeuronsCount}, CharacterMapping.recognizedCharacters.length);
+        PerceptronController.perceptron = new Perceptron(imageWidth * imageHeight, new int[]{hiddenNeuronsCount,hiddenNeuronsCount}, CharacterMapping.recognizedCharacters.length);
         PerceptronController.imageWidth = imageWidth;
         PerceptronController.imageHeight = imageHeight;
         perceptronController.learnButton.setDisable(false);
@@ -182,15 +183,28 @@ public class PerceptronController {
         double[] imageArray = ImageReader.transformImageToArray(bufferedImage);
         Neuron[] outputNeurons = perceptron.propagate(imageArray);
         NavigableMap<Double, Character> matchingCharacters = CharacterMapping.getCharactersForArray(Neuron.getNeuronValues(outputNeurons));
-        Map.Entry<Double, Character> lastEntry = matchingCharacters.lastEntry();
-        if (lastEntry.getKey() >= 0.75) {
-            guessText.setText("Your character is a " + lastEntry.getValue());
-        } else if (lastEntry.getKey() >= 0.5) {
-            guessText.setText("Your character is probably a " + lastEntry.getValue());
-        } else if (lastEntry.getKey() >= 0.25) {
-            guessText.setText("Your character might be a " + lastEntry.getValue());
+        Map<Double,Character> sortedMap = new TreeMap<>();
+        /** Transform char list to string*/
+        matchingCharacters.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.naturalOrder())).skip(matchingCharacters.size()-3)
+                .forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
+
+        DecimalFormat df = new DecimalFormat("##.##");
+
+
+        List<String> letters = new ArrayList<>();
+        Map.Entry<Double,Character> FirstEntry = sortedMap.entrySet().stream().findFirst().get();
+
+        sortedMap.forEach((aDouble, character) ->{  letters.add(character + "("+ df.format(aDouble) +") "); System.out.println(character + "("+ df.format(aDouble) +")");});
+
+
+        if (matchingCharacters.lastEntry().getKey()>= 0.75) {
+            guessText.setText("Your character is a " +  matchingCharacters.lastEntry().getValue()+ "(" + df.format(matchingCharacters.lastEntry().getKey()) + ")");
+        } else if (matchingCharacters.lastEntry().getKey()>= 0.5) {
+            guessText.setText("Your character is probably  " + String.join(" or ", letters));
+        } else if (matchingCharacters.lastEntry().getKey() >= 0.25) {
+            guessText.setText("Your character might be  "  + String.join(" or ", letters));
         } else {
-            guessText.setText("Your character could be a " + lastEntry.getValue());
+            guessText.setText("Your character could be "  + String.join(" or ", letters));
         }
     }
 }

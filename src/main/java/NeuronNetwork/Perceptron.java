@@ -1,7 +1,7 @@
 package NeuronNetwork;
 
 public class Perceptron {
-    private double LEARNING_STEP = 0.5;
+    private double LEARNING_STEP = 0.15;
 
     private double[][] weights;
 
